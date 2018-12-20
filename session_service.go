@@ -68,6 +68,48 @@ func (sc SessionService) Get(rw http.ResponseWriter, r *http.Request) (*Session,
 	return sess, nil
 }
 
+//Renew renews the session from
+func (sc SessionService) Renew(rw http.ResponseWriter, r *http.Request) (*Session, error) {
+	cookie, err := r.Cookie(sc.Name)
+
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = sc.SessionProvider.Get(cookie.Value)
+
+	if err != nil {
+		return nil, err
+	}
+
+	sc.SessionProvider.Remove(cookie.Value)
+
+	dc := &http.Cookie{
+		Name:    sc.Name,
+		MaxAge:  -1,
+		Expires: time.Unix(1, 0),
+		Path:    sc.Path,
+	}
+
+	http.SetCookie(rw, dc)
+
+	sid := base64.StdEncoding.EncodeToString(randomSecureKey(64))
+
+	s := sc.SessionProvider.Create(sid)
+
+	cookie = &http.Cookie{
+		Path:     sc.Path,
+		HttpOnly: sc.HTTPOnly,
+		Name:     sc.Name,
+		Secure:   sc.Secure,
+		Value:    s.SessionID(),
+	}
+
+	http.SetCookie(rw, cookie)
+
+	return s, nil
+}
+
 //Remove removes the session from the session map and the cookie
 func (sc SessionService) Remove(rw http.ResponseWriter, r *http.Request) error {
 	cookie, err := r.Cookie(sc.Name)
