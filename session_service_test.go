@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"git.hoogi.eu/session"
+	"git.hoogi.eu/snafu/session"
 )
 
 func sampleSessionService() session.SessionService {
