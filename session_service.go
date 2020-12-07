@@ -23,6 +23,7 @@ type SessionService struct {
 	SessionProvider SessionProvider
 }
 
+//Create creates the session for the request
 func (sc SessionService) Create(rw http.ResponseWriter, r *http.Request) *Session {
 	sid := base64.StdEncoding.EncodeToString(randomSecureKey(64))
 

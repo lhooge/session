@@ -14,7 +14,7 @@ import (
 type SessionProvider interface {
 	Create(sid string) *Session
 	Get(sid string) (*Session, error)
-	SessionIDsFromValues(key string, value interface{}) []string
+	SessionsFromValues(key string, value interface{}) []Session
 	Remove(sid string)
 	Clean(ticker *time.Ticker, timeoutAfter time.Duration)
 }
@@ -60,20 +60,20 @@ func (imp *InMemoryProvider) Get(sid string) (*Session, error) {
 }
 
 //SessionIDsFromValues receives all session ids from the map found with the key and value
-func (imp *InMemoryProvider) SessionIDsFromValues(key string, value interface{}) []string {
+func (imp *InMemoryProvider) SessionsFromValues(key string, value interface{}) []Session {
 	imp.mutex.RLock()
 
 	defer imp.mutex.RUnlock()
 
-	var ids []string
+	var sessions []Session
 
 	for _, s := range imp.sessions {
 		if s.values[key] == value {
-			ids = append(ids, s.SessionID())
+			sessions = append(sessions, *s)
 		}
 	}
 
-	return ids
+	return sessions
 }
 
 //Remove removes a session by the session identifier from the map
