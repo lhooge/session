@@ -59,13 +59,13 @@ func (imp *InMemoryProvider) Get(sid string) (*Session, error) {
 	return nil, fmt.Errorf("no session with id %s found", sid)
 }
 
-//Get receives the session from the map by the session identifier
+//SessionIDsFromValues receives all session ids from the map found with the key and value
 func (imp *InMemoryProvider) SessionIDsFromValues(key string, value interface{}) []string {
 	imp.mutex.RLock()
 
 	defer imp.mutex.RUnlock()
 
-	ids := []string{}
+	var ids []string
 
 	for _, s := range imp.sessions {
 		if s.values[key] == value {
@@ -84,8 +84,7 @@ func (imp *InMemoryProvider) Remove(sid string) {
 	delete(imp.sessions, sid)
 }
 
-//Clean clean sessions after a specified timeout
-//Checks every x durations defined in config
+//Clean clean sessions after the specified timeout
 func (imp *InMemoryProvider) Clean(ticker *time.Ticker, timeoutAfter time.Duration) {
 	go func() {
 		for range ticker.C {

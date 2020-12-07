@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-//SessionConfig contains settings for the session
+//SessionService contains settings for the session
 type SessionService struct {
 	Path           string
 	HTTPOnly       bool
@@ -68,7 +68,7 @@ func (sc SessionService) Get(rw http.ResponseWriter, r *http.Request) (*Session,
 	return sess, nil
 }
 
-//Renew renews the session from
+//Renew renews the session
 func (sc SessionService) Renew(rw http.ResponseWriter, r *http.Request) (*Session, error) {
 	cookie, err := r.Cookie(sc.Name)
 

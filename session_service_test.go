@@ -55,11 +55,11 @@ func TestSessionLifeCycle(t *testing.T) {
 	}
 
 	if getSess.SessionID() != session.SessionID() {
-		t.Fatalf("got an invalid session id. Initial %s, after get %s", session.SessionID(), getSess.SessionID())
+		t.Fatalf("invalid session id, want %s, got %s", session.SessionID(), getSess.SessionID())
 	}
 
 	if getSess.GetValue("userid") != 3 {
-		t.Fatalf("the session does not contain the expected userid %d in the session values, got userid %v", 3, session.GetValue("userid"))
+		t.Fatalf("the session does not contain the expected user id %d in the session values, got userid %v", 3, session.GetValue("userid"))
 	}
 
 	removeSession(t, cookie.Raw, sessionService)
@@ -142,18 +142,18 @@ func removeSession(t *testing.T, rawCookieValue string, cs session.SessionServic
 
 func checkCookie(t *testing.T, cookie, expectedCookie *http.Cookie) {
 	if cookie.Name != expectedCookie.Name {
-		t.Errorf("got an unexpected cookie name. Expected %s, bot got %s", expectedCookie.Name, cookie.Name)
+		t.Errorf("unexpected cookie name, want: %s, got: %s", expectedCookie.Name, cookie.Name)
 	}
 	if cookie.Path != expectedCookie.Path {
-		t.Errorf("got an unexpected cookie path. Expected %s, bot got %s", expectedCookie.Path, cookie.Path)
+		t.Errorf("unexpected cookie path, want: %s, got %s", expectedCookie.Path, cookie.Path)
 	}
 	if cookie.Value != expectedCookie.Value {
-		t.Errorf("got an unexpected cookie value. Expected %s, bot got %s", expectedCookie.Value, cookie.Value)
+		t.Errorf("unexpected cookie value, want %s, got %s", expectedCookie.Value, cookie.Value)
 	}
 	if cookie.HttpOnly != expectedCookie.HttpOnly {
-		t.Errorf("got an unexpected cookie http only f;ag. Expected %t, bot got %t", expectedCookie.HttpOnly, cookie.HttpOnly)
+		t.Errorf("unexpected cookie http only flag, want %t, got %t", expectedCookie.HttpOnly, cookie.HttpOnly)
 	}
 	if cookie.Secure != expectedCookie.Secure {
-		t.Errorf("got an unexpected cookie secure flag. Expected %t, bot got %t", expectedCookie.Secure, cookie.Secure)
+		t.Errorf("unexpected cookie secure flag, want %t, got %t", expectedCookie.Secure, cookie.Secure)
 	}
 }

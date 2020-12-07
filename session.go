@@ -22,7 +22,7 @@ func (s *Session) GetLastTouchTime() time.Time {
 	return s.lastTouched
 }
 
-//GetSessionID gets the sessionID
+//SessionID gets the sessionID
 func (s *Session) SessionID() string {
 	return s.sid
 }
