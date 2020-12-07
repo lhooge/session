@@ -14,7 +14,7 @@ import (
 type SessionProvider interface {
 	Create(sid string) *Session
 	Get(sid string) (*Session, error)
-	SessionsFromValues(key string, value interface{}) []Session
+	FindSessionsByValue(key string, value interface{}) []Session
 	Remove(sid string)
 	Clean(ticker *time.Ticker, timeoutAfter time.Duration)
 }
@@ -59,8 +59,8 @@ func (imp *InMemoryProvider) Get(sid string) (*Session, error) {
 	return nil, fmt.Errorf("no session with id %s found", sid)
 }
 
-//SessionIDsFromValues receives all session ids from the map found with the key and value
-func (imp *InMemoryProvider) SessionsFromValues(key string, value interface{}) []Session {
+//FindSessionsByValues finds all sessions from the map found by the key and value
+func (imp *InMemoryProvider) FindSessionsByValue(key string, value interface{}) []Session {
 	imp.mutex.RLock()
 
 	defer imp.mutex.RUnlock()
