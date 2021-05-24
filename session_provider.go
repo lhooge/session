@@ -10,29 +10,29 @@ import (
 	"time"
 )
 
-//SessionProvider an interface for storing and accessing sessions
-type SessionProvider interface {
+// Provider an interface for storing and accessing sessions
+type Provider interface {
 	Create(sid string) *Session
 	Get(sid string) (*Session, error)
-	FindSessionsByValue(key string, value interface{}) []Session
+	FindByValue(key string, value interface{}) []*Session
 	Remove(sid string)
 	Clean(ticker *time.Ticker, timeoutAfter time.Duration)
 }
 
-//InMemoryProvider implements a in memory storage for sessions
+// InMemoryProvider implements a in memory storage for sessions
 type InMemoryProvider struct {
 	sessions map[string]*Session
 	mutex    sync.RWMutex
 }
 
-//NewInMemoryProvider creates a new in memory provider
+// NewInMemoryProvider creates a new in memory provider
 func NewInMemoryProvider() *InMemoryProvider {
 	return &InMemoryProvider{
 		sessions: make(map[string]*Session),
 	}
 }
 
-//Create stores a session in the map
+// Create stores a session in the map
 func (imp *InMemoryProvider) Create(sid string) *Session {
 	imp.mutex.Lock()
 
@@ -47,7 +47,7 @@ func (imp *InMemoryProvider) Create(sid string) *Session {
 	return imp.sessions[sid]
 }
 
-//Get receives the session from the map by the session identifier
+// Get receives the session from the map by the session identifier
 func (imp *InMemoryProvider) Get(sid string) (*Session, error) {
 	imp.mutex.RLock()
 	defer imp.mutex.RUnlock()
@@ -59,24 +59,24 @@ func (imp *InMemoryProvider) Get(sid string) (*Session, error) {
 	return nil, fmt.Errorf("no session with id %s found", sid)
 }
 
-//FindSessionsByValues finds all sessions from the map found by the key and value
-func (imp *InMemoryProvider) FindSessionsByValue(key string, value interface{}) []Session {
+// FindByValue finds all sessions from the map found by the key and value
+func (imp *InMemoryProvider) FindByValue(key string, value interface{}) []*Session {
 	imp.mutex.RLock()
 
 	defer imp.mutex.RUnlock()
 
-	var sessions []Session
+	var sessions []*Session
 
 	for _, s := range imp.sessions {
 		if s.values[key] == value {
-			sessions = append(sessions, *s)
+			sessions = append(sessions, s)
 		}
 	}
 
 	return sessions
 }
 
-//Remove removes a session by the session identifier from the map
+// Remove removes a session by the session identifier from the map
 func (imp *InMemoryProvider) Remove(sid string) {
 	imp.mutex.Lock()
 	defer imp.mutex.Unlock()
@@ -84,7 +84,7 @@ func (imp *InMemoryProvider) Remove(sid string) {
 	delete(imp.sessions, sid)
 }
 
-//Clean clean sessions after the specified timeout
+// Clean clean sessions after the specified timeout
 func (imp *InMemoryProvider) Clean(ticker *time.Ticker, timeoutAfter time.Duration) {
 	go func() {
 		for range ticker.C {

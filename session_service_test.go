@@ -13,8 +13,8 @@ import (
 	"git.hoogi.eu/snafu/session"
 )
 
-func sampleSessionService() session.SessionService {
-	sessionService := session.SessionService{
+func sampleSessionService() session.Service {
+	sessionService := session.Service{
 		Secure:         true,
 		Path:           "/test",
 		HTTPOnly:       true,
@@ -102,7 +102,7 @@ func TestSessionGarbageCollection(t *testing.T) {
 	}
 }
 
-func createSession(t *testing.T, sc session.SessionService) (*session.Session, *http.Cookie) {
+func createSession(t *testing.T, sc session.Service) (*session.Session, *http.Cookie) {
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -117,7 +117,7 @@ func createSession(t *testing.T, sc session.SessionService) (*session.Session, *
 	return createdSession, cookies[0]
 }
 
-func getSession(t *testing.T, rawCookieValue string, sc session.SessionService) (*session.Session, error) {
+func getSession(t *testing.T, rawCookieValue string, sc session.Service) (*session.Session, error) {
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -128,7 +128,7 @@ func getSession(t *testing.T, rawCookieValue string, sc session.SessionService) 
 	return getSession, err
 }
 
-func removeSession(t *testing.T, rawCookieValue string, cs session.SessionService) {
+func removeSession(t *testing.T, rawCookieValue string, cs session.Service) {
 	req, err := http.NewRequest("GET", "/", nil)
 	if err != nil {
 		t.Fatal(err)

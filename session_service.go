@@ -12,19 +12,19 @@ import (
 	"time"
 )
 
-//SessionService contains settings for the session
-type SessionService struct {
+// Service contains settings for the session
+type Service struct {
 	Path           string
 	HTTPOnly       bool
 	Name           string
 	Secure         bool
 	IdleSessionTTL int64
 
-	SessionProvider SessionProvider
+	SessionProvider Provider
 }
 
-//Create creates the session for the request
-func (sc SessionService) Create(rw http.ResponseWriter, r *http.Request) *Session {
+// Create creates the session for the request
+func (sc Service) Create(rw http.ResponseWriter, r *http.Request) *Session {
 	sid := base64.StdEncoding.EncodeToString(randomSecureKey(64))
 
 	s := sc.SessionProvider.Create(sid)
@@ -42,8 +42,8 @@ func (sc SessionService) Create(rw http.ResponseWriter, r *http.Request) *Sessio
 	return s
 }
 
-//Get receives the session from the cookie
-func (sc SessionService) Get(rw http.ResponseWriter, r *http.Request) (*Session, error) {
+// Get receives the session from the cookie
+func (sc Service) Get(rw http.ResponseWriter, r *http.Request) (*Session, error) {
 	cookie, err := r.Cookie(sc.Name)
 
 	if err != nil {
@@ -69,8 +69,8 @@ func (sc SessionService) Get(rw http.ResponseWriter, r *http.Request) (*Session,
 	return sess, nil
 }
 
-//Renew renews the session
-func (sc SessionService) Renew(rw http.ResponseWriter, r *http.Request) (*Session, error) {
+// Renew renews the session
+func (sc Service) Renew(rw http.ResponseWriter, r *http.Request) (*Session, error) {
 	cookie, err := r.Cookie(sc.Name)
 
 	if err != nil {
@@ -111,8 +111,8 @@ func (sc SessionService) Renew(rw http.ResponseWriter, r *http.Request) (*Sessio
 	return s, nil
 }
 
-//Remove removes the session from the session map and the cookie
-func (sc SessionService) Remove(rw http.ResponseWriter, r *http.Request) error {
+// Remove removes the session from the session map and the cookie
+func (sc Service) Remove(rw http.ResponseWriter, r *http.Request) error {
 	cookie, err := r.Cookie(sc.Name)
 
 	if err != nil {
@@ -133,8 +133,8 @@ func (sc SessionService) Remove(rw http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-//InitGC initialized the garbage collection for removing the session after the TTL has reached
-func (sc SessionService) InitGC(ticker *time.Ticker, timeoutAfter time.Duration) {
+// InitGC initializes the garbage collection for removing the session after the TTL has reached
+func (sc Service) InitGC(ticker *time.Ticker, timeoutAfter time.Duration) {
 	sc.SessionProvider.Clean(ticker, timeoutAfter)
 }
 

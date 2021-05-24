@@ -1,6 +1,8 @@
 // Copyright 2018 Lars Hoogestraat
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
+
+// Package session
 package session
 
 import (
@@ -8,7 +10,7 @@ import (
 	"time"
 )
 
-//Session contains the session
+// Session contains the session
 type Session struct {
 	sid         string
 	lastTouched time.Time
@@ -17,32 +19,32 @@ type Session struct {
 	mutex  sync.RWMutex
 }
 
-//GetLastTouchTime recveives the date when the session was touched
+// GetLastTouchTime receives the date when the session was touched last time
 func (s *Session) GetLastTouchTime() time.Time {
 	return s.lastTouched
 }
 
-//SessionID gets the sessionID
+// SessionID gets the sessionID
 func (s *Session) SessionID() string {
 	return s.sid
 }
 
-//SetValue sets a value into the session
+// SetValue sets a value into the session
 func (s *Session) SetValue(key string, value interface{}) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	s.values[key] = value
 }
 
-//GetValue receives a value from the session
+// GetValue receives a value from the session
 func (s *Session) GetValue(key string) interface{} {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 	return s.values[key]
 }
 
-//RemoveValue removes a previously set value from the session
-func (s *Session) RemoveValue(key string) {
+// RemoveKey removes a key from the session
+func (s *Session) RemoveKey(key string) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 	delete(s.values, key)
